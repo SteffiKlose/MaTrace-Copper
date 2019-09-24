@@ -1,0 +1,3 @@
+Steffi
+C:\\Users\\sklose\\Documents\\Python Scripts\\MaTrace_Copper\\
+MaTraceCopper_Indata.xlsx
