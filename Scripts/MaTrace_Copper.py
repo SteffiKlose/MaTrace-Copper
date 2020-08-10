@@ -1304,12 +1304,12 @@ results_regions_GP_df = pd.DataFrame( results_share_GP)
 results_regions_df = pd.DataFrame(results_regions)
 results_in_use_df = pd.DataFrame(results_in_use)
 
-writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' + 'Regional Results\\' + 'Pi_Chart_regions_results.xlsx',engine='openpyxl')
+writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' +  'Pi_Chart_regions_results.xlsx',engine='openpyxl')
    
           
-book=load_workbook(str(Project_MainPath) + '\\General_Results\\' + 'Regional Results\\' + 'Pi_Chart_regions3.xlsx')
+book=load_workbook(str(Project_MainPath) + '\\General_Results\\' + 'Pi_Chart_regions_results.xlsx')
 
-writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' + 'Regional Results\\' + 'Pi_Chart_regions3.xlsx',engine='openpyxl')
+writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' + 'Pi_Chart_regions_results.xlsx',engine='openpyxl')
 
 writer.book=book
 
