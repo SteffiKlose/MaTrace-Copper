@@ -779,6 +779,9 @@ def Matrace(Par_A_EolToScrap_Copper, Par_B_ScrapToRemeltingRoute, Par_C_Remeltin
     
     F_0_IV[SY,:,:] = Par_Input_F_0_8[SY,:,:]
 
+    #F_0_IV[:,:,:] = np.zeros((286,9,16))
+    
+   # F_0_IV[:,:,:] = []
 
     for CY in range(0,EY+1): # CY stands for 'current year'
         
@@ -871,13 +874,13 @@ def Matrace(Par_A_EolToScrap_Copper, Par_B_ScrapToRemeltingRoute, Par_C_Remeltin
 
         if CY == 0:
             Mylog.info('Stock determination for year 0.<br>')
-            S_1[0,:,:]                  = F_IV_A[0,:,:]    -F_y[0,:,:]    
-            S_Env_Omega[0,:,:]          = F_A_Env_Omega[0,:,:]
-            S_Env_Sigma[0,:,:]          = F_A_Env_Sigma[0,:,:]
+            S_1[0,:,:]                = F_IV_A[0,:,:]    -F_y[0,:,:]    
+            S_Env_Omega[0,:,:]        = F_A_Env_Omega[0,:,:]
+            S_Env_Sigma[0,:,:]        = F_A_Env_Sigma[0,:,:]
             S_Env_Phi[0,:]            = F_B_Env_Phi[0,:,:].sum(axis=1) + F_B_Env_Phi_inf[0,:]
             S_Env_Theta[0,:]          = F_C_Env_Theta[0,:,:].sum(axis=1) + F_C_Env_Theta_inf[0,:]
-            S_Env_Gamma[0,:,:]              = F_A_Env_Gamma[0,:,:]
-            
+            S_Env_Gamma[0,:,:]        = F_A_Env_Gamma[0,:,:]
+
         else:
             Mylog.info('Stock determination.<br>')
             S_1[CY,:,:]                 = S_1[CY-1,:,:]         + F_IV_A[CY,:,:] - F_y[CY,:,:]          
@@ -886,7 +889,10 @@ def Matrace(Par_A_EolToScrap_Copper, Par_B_ScrapToRemeltingRoute, Par_C_Remeltin
             S_Env_Phi[CY,:]           = S_Env_Phi[CY-1,:]  + F_B_Env_Phi[CY,:,:].sum(axis=1) + F_B_Env_Phi_inf[CY,:]
             S_Env_Theta[CY,:]         = S_Env_Theta[CY-1,:] + F_C_Env_Theta[CY,:,:].sum(axis=1) + F_C_Env_Theta_inf[CY,:]  
             S_Env_Gamma[CY,:,:]             = S_Env_Gamma[CY-1,:,:]     + F_A_Env_Gamma[CY,:,:]
-            
+        
+        S_Tot[CY]              =S_1[CY,:,:].sum() + S_Env_Omega[CY,:,:].sum() +  S_Env_Sigma[CY,:,:].sum() + S_Env_Phi[CY,:].sum() + S_Env_Theta[CY,:].sum()  + S_Env_Gamma[CY,:,:].sum() + F_D_II[CY,:,:].sum()
+        
+        
     return S_1, S_Env_Gamma, S_Env_Omega, S_Env_Sigma, S_Env_Phi, S_Env_Theta, S_Tot, Bal_A, Bal_B, Bal_Binf, Bal_C, Bal_D, Bal_I, Bal_II, Bal_III, Bal_IV, Bal_System, F_IV_A
           
 
@@ -1222,6 +1228,10 @@ S_1, S_Env_Gamma, S_Env_Omega, S_Env_Sigma, S_Env_Phi, S_Env_Theta, S_Tot, Bal_A
 tau= round(S_1.sum()/19800,1)
 n_circ = round(F_IV_A.sum()/Par_Input_F_0_8[SY,:,:].sum(),2)
 
+
+Total_Losses_tot_all=S_Env_Omega[:,:,:].sum(axis=1).sum(axis=1)+ S_Env_Sigma[:,:,:].sum(axis=1).sum(axis=1)+ S_Env_Phi[:,:].sum(axis=1)+ S_Env_Theta[:,:].sum(axis=1) + S_Env_Gamma[:,:,:].sum(axis=1).sum(axis=1)
+
+
 print(Name_Scenario)
 print('tau')
 print(tau)
@@ -1250,78 +1260,139 @@ for r in range(0,Par_NoOfRegions):
     
         
     
-GN=[3] # Western Europe
-GN_Share_Losses_Omega = Total_Losses_Omega[GN].sum()
-GN_Share_Losses_Sigma = Total_Losses_Sigma[GN].sum()
-GN_Share_Losses_Phi = Total_Losses_Phi[GN].sum()  
-GN_Share_Losses_Theta = Total_Losses_Theta[GN].sum()
-GN_Share_Losses_Gamma = Total_Losses_Gamma[GN].sum()
-GN_in_use = S_1[35,GN,:].sum()
-
-
-GS=[0] # China
-GS_Share_Losses_Omega = Total_Losses_Omega[GS].sum()
-GS_Share_Losses_Sigma = Total_Losses_Sigma[GS].sum()
-GS_Share_Losses_Phi = Total_Losses_Phi[GS].sum()
-GS_Share_Losses_Theta = Total_Losses_Theta[GS].sum()
-GS_Share_Losses_Gamma = Total_Losses_Gamma[GS].sum()
-GS_in_use = S_1[35,GS,:].sum()
-
-GL=[7] # Africa
-GL_Share_Losses_Omega = Total_Losses_Omega[GL].sum()
-GL_Share_Losses_Sigma = Total_Losses_Sigma[GL].sum()
-GL_Share_Losses_Phi = Total_Losses_Phi[GL].sum()
-GL_Share_Losses_Theta = Total_Losses_Theta[GL].sum()
-GL_Share_Losses_Gamma = Total_Losses_Gamma[GL].sum()
-GL_in_use = S_1[35,GL,:].sum()
-
-GP=[2] # NAM
-GP_Share_Losses_Omega = Total_Losses_Omega[GP].sum()
-GP_Share_Losses_Sigma = Total_Losses_Sigma[GP].sum()
-GP_Share_Losses_Phi = Total_Losses_Phi[GP].sum()
-GP_Share_Losses_Theta = Total_Losses_Theta[GP].sum()
-GP_Share_Losses_Gamma = Total_Losses_Gamma[GP].sum()
-GP_in_use = S_1[35,GP,:].sum()
 
 
 
-results_share_GN=[Name_Scenario, 'Western Europe', GN_Share_Losses_Omega, GN_Share_Losses_Sigma ,GN_Share_Losses_Phi,GN_Share_Losses_Theta,GN_Share_Losses_Gamma,GN_in_use]
-results_share_GS=[Name_Scenario,'China', GS_Share_Losses_Omega, GS_Share_Losses_Sigma ,GS_Share_Losses_Phi,GS_Share_Losses_Theta,GS_Share_Losses_Gamma, GS_in_use]
-results_share_GL=[Name_Scenario,'Africa', GL_Share_Losses_Omega, GL_Share_Losses_Sigma ,GL_Share_Losses_Phi,GL_Share_Losses_Theta,GL_Share_Losses_Gamma, GL_in_use]
-results_share_GP=[Name_Scenario,'NAM', GP_Share_Losses_Omega, GP_Share_Losses_Sigma ,GP_Share_Losses_Phi,GP_Share_Losses_Theta,GP_Share_Losses_Gamma, GP_in_use]
+G0=[0] # China
+G0_Share_Losses_Omega = Total_Losses_Omega[G0].sum()
+G0_Share_Losses_Sigma = Total_Losses_Sigma[G0].sum()
+G0_Share_Losses_Phi = Total_Losses_Phi[G0].sum()
+G0_Share_Losses_Theta = Total_Losses_Theta[G0].sum()
+G0_Share_Losses_Gamma = Total_Losses_Gamma[G0].sum()
+G0_in_use = S_1[35,G0,:].sum()
+
+G1=[1] # India
+G1_Share_Losses_Omega = Total_Losses_Omega[G1].sum()
+G1_Share_Losses_Sigma = Total_Losses_Sigma[G1].sum()
+G1_Share_Losses_Phi = Total_Losses_Phi[G1].sum()
+G1_Share_Losses_Theta = Total_Losses_Theta[G1].sum()
+G1_Share_Losses_Gamma = Total_Losses_Gamma[G1].sum()
+G1_in_use = S_1[35,G1,:].sum()
+
+G2=[2] # NAM
+G2_Share_Losses_Omega = Total_Losses_Omega[G2].sum()
+G2_Share_Losses_Sigma = Total_Losses_Sigma[G2].sum()
+G2_Share_Losses_Phi = Total_Losses_Phi[G2].sum()
+G2_Share_Losses_Theta = Total_Losses_Theta[G2].sum()
+G2_Share_Losses_Gamma = Total_Losses_Gamma[G2].sum()
+G2_in_use = S_1[35,G2,:].sum()
+
+G3=[3] # Western Europe
+G3_Share_Losses_Omega = Total_Losses_Omega[G3].sum()
+G3_Share_Losses_Sigma = Total_Losses_Sigma[G3].sum()
+G3_Share_Losses_Phi = Total_Losses_Phi[G3].sum()  
+G3_Share_Losses_Theta = Total_Losses_Theta[G3].sum()
+G3_Share_Losses_Gamma = Total_Losses_Gamma[G3].sum()
+G3_in_use = S_1[35,G3,:].sum()
 
 
+G4=[4] # RoOECD
+G4_Share_Losses_Omega = Total_Losses_Omega[G4].sum()
+G4_Share_Losses_Sigma = Total_Losses_Sigma[G4].sum()
+G4_Share_Losses_Phi = Total_Losses_Phi[G4].sum()
+G4_Share_Losses_Theta = Total_Losses_Theta[G4].sum()
+G4_Share_Losses_Gamma = Total_Losses_Gamma[G4].sum()
+G4_in_use = S_1[35,G4,:].sum()
+
+G5=[5] # REF
+G5_Share_Losses_Omega = Total_Losses_Omega[G5].sum()
+G5_Share_Losses_Sigma = Total_Losses_Sigma[G5].sum()
+G5_Share_Losses_Phi = Total_Losses_Phi[G5].sum()
+G5_Share_Losses_Theta = Total_Losses_Theta[G5].sum()
+G5_Share_Losses_Gamma = Total_Losses_Gamma[G5].sum()
+G5_in_use = S_1[35,G5,:].sum()
+
+G6=[6] # RoAsia
+G6_Share_Losses_Omega = Total_Losses_Omega[G6].sum()
+G6_Share_Losses_Sigma = Total_Losses_Sigma[G6].sum()
+G6_Share_Losses_Phi = Total_Losses_Phi[G6].sum()
+G6_Share_Losses_Theta = Total_Losses_Theta[G6].sum()
+G6_Share_Losses_Gamma = Total_Losses_Gamma[G6].sum()
+G6_in_use = S_1[35,G6,:].sum()
+
+G7=[7] # MEA
+G7_Share_Losses_Omega = Total_Losses_Omega[G7].sum()
+G7_Share_Losses_Sigma = Total_Losses_Sigma[G7].sum()
+G7_Share_Losses_Phi = Total_Losses_Phi[G7].sum()
+G7_Share_Losses_Theta = Total_Losses_Theta[G7].sum()
+G7_Share_Losses_Gamma = Total_Losses_Gamma[G7].sum()
+G7_in_use = S_1[35,G7,:].sum()
+
+G8=[8] # LAM
+G8_Share_Losses_Omega = Total_Losses_Omega[G8].sum()
+G8_Share_Losses_Sigma = Total_Losses_Sigma[G8].sum()
+G8_Share_Losses_Phi = Total_Losses_Phi[G8].sum()
+G8_Share_Losses_Theta = Total_Losses_Theta[G8].sum()
+G8_Share_Losses_Gamma = Total_Losses_Gamma[G8].sum()
+G8_in_use = S_1[35,G8,:].sum()
+
+
+
+results_share_G0=[Name_Scenario,'China', G0_Share_Losses_Omega, G0_Share_Losses_Sigma ,G0_Share_Losses_Phi,G0_Share_Losses_Theta,G0_Share_Losses_Gamma, G0_in_use]
+results_share_G1=[Name_Scenario,'India', G1_Share_Losses_Omega, G1_Share_Losses_Sigma ,G1_Share_Losses_Phi,G1_Share_Losses_Theta,G1_Share_Losses_Gamma, G1_in_use]
+results_share_G2=[Name_Scenario,'NAM', G2_Share_Losses_Omega, G2_Share_Losses_Sigma ,G2_Share_Losses_Phi,G2_Share_Losses_Theta,G2_Share_Losses_Gamma, G2_in_use]
+results_share_G3=[Name_Scenario, 'Western Europe', G3_Share_Losses_Omega, G3_Share_Losses_Sigma ,G3_Share_Losses_Phi,G3_Share_Losses_Theta,G3_Share_Losses_Gamma,G3_in_use]
+results_share_G4=[Name_Scenario,'RoOECD', G4_Share_Losses_Omega, G4_Share_Losses_Sigma ,G4_Share_Losses_Phi,G4_Share_Losses_Theta,G4_Share_Losses_Gamma, G4_in_use]
+results_share_G5=[Name_Scenario,'REF', G5_Share_Losses_Omega, G5_Share_Losses_Sigma ,G5_Share_Losses_Phi,G5_Share_Losses_Theta,G5_Share_Losses_Gamma, G5_in_use]
+results_share_G6=[Name_Scenario,'RoAsia', G6_Share_Losses_Omega, G6_Share_Losses_Sigma ,G6_Share_Losses_Phi,G6_Share_Losses_Theta,G6_Share_Losses_Gamma, G6_in_use]
+results_share_G7=[Name_Scenario,'MEA', G7_Share_Losses_Omega, G7_Share_Losses_Sigma ,G7_Share_Losses_Phi,G7_Share_Losses_Theta,G7_Share_Losses_Gamma, G7_in_use]
+results_share_G8=[Name_Scenario,'LAM', G8_Share_Losses_Omega, G8_Share_Losses_Sigma ,G8_Share_Losses_Phi,G8_Share_Losses_Theta,G8_Share_Losses_Gamma, G8_in_use]
 
 results_regions = [Total_Losses_regions]
 results_in_use = [S_1[35,:,:].sum()]
     
-    
-results_regions_GN_df = pd.DataFrame( results_share_GN)
-results_regions_GS_df = pd.DataFrame( results_share_GS)
-results_regions_GL_df = pd.DataFrame( results_share_GL)
-results_regions_GP_df = pd.DataFrame( results_share_GP)
+results_regions_G0_df = pd.DataFrame( results_share_G0)
+results_regions_G1_df = pd.DataFrame( results_share_G1)
+results_regions_G2_df = pd.DataFrame( results_share_G2)
+results_regions_G3_df = pd.DataFrame( results_share_G3)
+results_regions_G4_df = pd.DataFrame( results_share_G4)
+results_regions_G5_df = pd.DataFrame( results_share_G5)
+results_regions_G6_df = pd.DataFrame( results_share_G6)
+results_regions_G7_df = pd.DataFrame( results_share_G7)
+results_regions_G8_df = pd.DataFrame( results_share_G8)
+
 
 results_regions_df = pd.DataFrame(results_regions)
 results_in_use_df = pd.DataFrame(results_in_use)
 
-writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' +  'Pi_Chart_regions_results.xlsx',engine='openpyxl')
+writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' +  'Pi_Chart_regions_results_all.xlsx',engine='openpyxl')
    
           
-book=load_workbook(str(Project_MainPath) + '\\General_Results\\' + 'Pi_Chart_regions_results.xlsx')
+book=load_workbook(str(Project_MainPath) + '\\General_Results\\' + 'Pi_Chart_regions_results_all.xlsx')
 
-writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' + 'Pi_Chart_regions_results.xlsx',engine='openpyxl')
+writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' + 'Pi_Chart_regions_results_all.xlsx',engine='openpyxl')
 
 writer.book=book
 
 writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
    
-results_regions_GN_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=1,index=False)
-results_regions_GS_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=10,index=False) 
-results_regions_GL_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=19,index=False) 
-results_regions_GP_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=28,index=False) 
+results_regions_G0_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=1,index=False)
+results_regions_G1_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=10,index=False) 
+results_regions_G2_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=19,index=False) 
+results_regions_G3_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=28,index=False) 
+results_regions_G4_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=37,index=False) 
+results_regions_G5_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=46,index=False) 
+results_regions_G6_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=55,index=False) 
+results_regions_G7_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=64,index=False) 
+results_regions_G8_df.to_excel(writer, sheet_name='Pi_charts',startcol=int(Number_Scenario),startrow=73,index=False) 
 
-results_regions_df.to_excel(writer, sheet_name='Regional_losses',startcol=0,startrow=int(Number_Scenario)*2,index=False) 
+
+Name_Scenario_df = pd.DataFrame([Name_Scenario])
+
+results_regions_df.to_excel(writer, sheet_name='Regional_losses',startcol=2,startrow=int(Number_Scenario)*2,index=False) 
 results_in_use_df.to_excel(writer, sheet_name='Regional_losses',startcol=12,startrow=int(Number_Scenario)*2,index=False) 
+Name_Scenario_df.to_excel(writer, sheet_name='Regional_losses',startcol=0,startrow=int(Number_Scenario)*2,index=False) 
+
 writer.save()
 
 
@@ -1376,8 +1447,8 @@ if ScriptConfig['Time horizon'] == 2100 or 2300:
              #   plt.legend(bbox_to_anchor=(1.04,1), loc="lower center")
                 xmin, xmax, ymin, ymax = 2015, 2100, 0, 20000
                 plt.axis([xmin, xmax, ymin, ymax])
-                plt.savefig(str(Path_Result) +'stockplot.svg',acecolor='w',edgecolor='w', bbox_inches='tight')
-                plt.savefig(str(Path_Result) +'stockplot.png',acecolor='w',edgecolor='w', dpi=500)
+                plt.savefig(str(Path_Result) + '\stockplot.svg',acecolor='w',edgecolor='w', bbox_inches='tight')
+                plt.savefig(str(Path_Result) +'\stockplot.png',acecolor='w',edgecolor='w', dpi=500)
         
 
 #
@@ -1488,9 +1559,9 @@ if ScriptConfig['Time horizon'] == 2100 or 2300:
 #
 #                results_sensitivity_df = pd.DataFrame(results_sensitivity)
 #              
-#                book=load_workbook(Project_MainPath + 'General_Results\\' +'Results_Sensitivity.xlsx')
+#                book=load_workbook(str(Project_MainPath) + 'General_Results\\' +'Results_Sensitivity.xlsx')
 #                
-#                writer=pd.ExcelWriter(Project_MainPath + 'General_Results\\' +'Results_Sensitivity.xlsx',engine='openpyxl')
+#                writer=pd.ExcelWriter(str(Project_MainPath) + 'General_Results\\' +'Results_Sensitivity.xlsx',engine='openpyxl')
 #                
 #                writer.book=book
 #                
@@ -1512,9 +1583,9 @@ if ScriptConfig['Time horizon'] == 2100 or 2300:
 #                
 #                TotalStockInTime_df = pd.DataFrame(TotalStockInTime1)
 #                              
-#                book=load_workbook(Project_MainPath + 'General_Results\\' +'Results_totalstock.xlsx')
+#                book=load_workbook(str(Project_MainPath) + 'General_Results\\' +'Results_totalstock.xlsx')
 #                
-#                writer=pd.ExcelWriter(Project_MainPath + 'General_Results\\' + 'Results_totalstock.xlsx' ,engine='openpyxl')
+#                writer=pd.ExcelWriter(str(Project_MainPath) + 'General_Results\\' + 'Results_totalstock.xlsx' ,engine='openpyxl')
 #                
 #                writer.book=book
 #                
@@ -1553,8 +1624,8 @@ if ScriptConfig['Time horizon'] == 2100 or 2300:
 #                xmin, xmax, ymin, ymax = 2015, 2100, 0.6, 1.42
 #                print(xmin, xmax, ymin, ymax)
 #                plt.axis([xmin, xmax, ymin, ymax])
-#                plt.savefig(Path_Result +'sensStockplot.svg',acecolor='w',edgecolor='w', bbox_inches='tight')
-#                plt.savefig(Path_Result +'sensStockplot.png',acecolor='w',edgecolor='w', bbox_inches='tight', dpi=500)
+#                plt.savefig(str(Path_Result) +'sensStockplot.svg',acecolor='w',edgecolor='w', bbox_inches='tight')
+#                plt.savefig(str(Path_Result) +'sensStockplot.png',acecolor='w',edgecolor='w', bbox_inches='tight', dpi=500)
 #                
 #workbook  = Sensitivity_Workbook.book
 #worksheet = Sensitivity_Workbook.sheets['Sheet1']
