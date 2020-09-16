@@ -38,7 +38,7 @@ def function_logger(file_level, Name_Scenario, Path_Result, console_level): # Se
         console_log.setFormatter(console_log_format)
         logger.addHandler(console_log)
 
-    file_log = logging.FileHandler(str(Path_Result) + '\\' + Name_Scenario + '.html', mode='w', encoding=None, delay=False)
+    file_log = logging.FileHandler(str(Path.joinpath(Path_Result, Name_Scenario +'.html')), mode='w', encoding=None, delay=False)
     file_log.setLevel(file_level)
     #file_log_format = logging.Formatter('%(asctime)s - %(lineno)d - %(levelname)-8s - %(message)s<br>')
     file_log_format = logging.Formatter('%(message)s<br>')
@@ -74,10 +74,10 @@ cwd = Path.cwd()
 Project_MainPath = cwd.parent
 Name_User        = '' # Enter your name here
 Input_Data        = 'MaTraceCopper_Indata.xlsx'
-Path_Data   = Path.joinpath(Project_MainPath ,'Data\\')
-Path_Results = Path.joinpath(Project_MainPath ,'Results\\')
-Path_Script = Path.joinpath(Project_MainPath ,'Scripts\\')
-
+Path_Data   = Path.joinpath(Project_MainPath ,'Data')
+Path_Results = Path.joinpath(Project_MainPath ,'Results')
+Path_Script = Path.joinpath(Project_MainPath ,'Scripts')
+Path_GeneralResults = Path.joinpath(Project_MainPath ,'General_Results')
 
 #%% Read Configuarion file    
 
@@ -90,7 +90,7 @@ Name_Scenario      = Project_Configsheet.cell_value(5,2)
 Number_Scenario      = Project_Configsheet.cell_value(3,2)
 StartTime          = datetime.datetime.now()
 TimeString         = str(StartTime.year) + '_' + str(StartTime.month) + '_' + str(StartTime.day) + '__' + str(StartTime.hour) + '_' + str(StartTime.minute) + '_' + str(StartTime.second)
-Path_Result        = Path.joinpath(Path_Results , Name_Scenario + '_' + TimeString + '\\')
+Path_Result        = Path.joinpath(Path_Results , Name_Scenario + '_' + TimeString )
 
 # Read control and selection parameters into dictionary
 ScriptConfig = {'Scenario_Description': Project_Configsheet.cell_value(6,2)}
@@ -108,7 +108,7 @@ ensure_dir(Path_Result)
 #Copy script and Config file into that folder
 os.mkdir(Path_Result)
 shutil.copyfile(Project_DataFilePath, Path.joinpath(Path_Result , Project_DataFileName))
-shutil.copyfile(Path.joinpath(Project_MainPath , 'Scripts\\MaTrace_Copper.py'), Path.joinpath(Path_Result ,'MaTrace_Copper.py'))
+shutil.copyfile(Path.joinpath(Path_Script,'MaTrace_Copper.py'), Path.joinpath(Path_Result ,'MaTrace_Copper.py'))
 # Initialize logger    
 [Mylog,console_log,file_log] = function_logger(logging.DEBUG, Name_Scenario + '_' + TimeString, Path_Result, logging.DEBUG) 
 
@@ -1196,7 +1196,7 @@ S_1, S_Env_Gamma, S_Env_Omega, S_Env_Sigma, S_Env_Phi, S_Env_Theta, S_Tot, Bal_A
 #my_xticks = [Par_Time]
 #xmin, xmax, ymin, ymax = 2015, 2100, 0, 20000
 #plt.axis([xmin, xmax, ymin, ymax])
-#plt.savefig(MCS_Path +'MCS_BAU_only.svg',acecolor='w',edgecolor='w', bbox_inches='tight')
+#plt.savefig(Path.joinpath(MCS_Path ,'MCS_BAU_only.svg'),acecolor='w',edgecolor='w', bbox_inches='tight')
 #plt.savefig(MCS_Path +'MCS_BAU_only.png',acecolor='w',edgecolor='w', dpi=500)
 #
 #plt.show()
@@ -1365,12 +1365,12 @@ results_regions_G8_df = pd.DataFrame( results_share_G8)
 results_regions_df = pd.DataFrame(results_regions)
 results_in_use_df = pd.DataFrame(results_in_use)
 
-writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' +  'Pi_Chart_regions_results_all.xlsx',engine='openpyxl')
+writer=pd.ExcelWriter(str(Path.joinpath(Path_GeneralResults,  'Pi_Chart_regions_results_all.xlsx')),engine='openpyxl')
    
           
-book=load_workbook(str(Project_MainPath) + '\\General_Results\\' + 'Pi_Chart_regions_results_all.xlsx')
+book=load_workbook(str(Path.joinpath(Path_GeneralResults,  'Pi_Chart_regions_results_all.xlsx')))
 
-writer=pd.ExcelWriter(str(Project_MainPath) + '\\General_Results\\' + 'Pi_Chart_regions_results_all.xlsx',engine='openpyxl')
+writer=pd.ExcelWriter(str(Path.joinpath(Path_GeneralResults,  'Pi_Chart_regions_results_all.xlsx')),engine='openpyxl')
 
 writer.book=book
 
