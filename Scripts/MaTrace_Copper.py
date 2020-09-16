@@ -1415,8 +1415,10 @@ if ScriptConfig['Time horizon'] == 2100 or 2300:
                 fig = plt.figure()
 
  #               matplotlib.rc('font', size=10)
-
-
+                lw=1.0
+                ax = fig.add_subplot(111)
+                if Number_Scenario in [13,17]:
+                    ax.yaxis.tick_right()
                 plt.xlabel('Year')
                 plt.ylabel('Copper mined in 2015 [kt]')
                 x = list(range(0,86))
@@ -1426,12 +1428,12 @@ if ScriptConfig['Time horizon'] == 2100 or 2300:
                              
 
                 #plot lines with sector stocks
-                plt.plot(Par_Time, S_1[x,:,12:16].sum(axis=1).sum(axis=1),'b',label='Consumer & Electronics')
-                plt.plot(Par_Time, S_1[x,:,0:5].sum(axis=1).sum(axis=1),'y',label='Building & Construction')
+                plt.plot(Par_Time, S_1[x,:,12:16].sum(axis=1).sum(axis=1),'b',label='Consumer & Electronics',linewidth=lw)
+                plt.plot(Par_Time, S_1[x,:,0:5].sum(axis=1).sum(axis=1),'y',label='Building & Construction',linewidth=lw)
          #       plt.plot(Par_Time, S_1[x,:,0:5].sum(axis=1).sum(axis=1)-S_Brass[x,:,:].sum(axis=1).sum(axis=1),'--r')
-                plt.plot(Par_Time, S_1[x,:,5:7].sum(axis=1).sum(axis=1),'g',label='Infrastructure')
-                plt.plot(Par_Time, S_1[x,:,7:9].sum(axis=1).sum(axis=1),'r',label='Industrial')
-                plt.plot(Par_Time, S_1[x,:,9:12].sum(axis=1).sum(axis=1),'c',label='Transport')
+                plt.plot(Par_Time, S_1[x,:,5:7].sum(axis=1).sum(axis=1),'g',label='Infrastructure',linewidth=lw)
+                plt.plot(Par_Time, S_1[x,:,7:9].sum(axis=1).sum(axis=1),'r',label='Industrial',linewidth=lw)
+                plt.plot(Par_Time, S_1[x,:,9:12].sum(axis=1).sum(axis=1),'c',label='Transport',linewidth=lw)
         
                 #plot losses and fill between
                 plt.fill_between(Par_Time, (S_1[x,:,:].sum(axis=1).sum(axis=1)), S_1[x,:,:].sum(axis=1).sum(axis=1)+S_Env_Omega[x,:,:].sum(axis=1).sum(axis=1),facecolor='whitesmoke',label='Obsolete stocks')
@@ -1452,269 +1454,11 @@ if ScriptConfig['Time horizon'] == 2100 or 2300:
         
 
 #
-#                Figure_2_paper =pd.DataFrame({#'Year':Par_Time, \
-#                                              Name_Scenario + '_Consumer & Electronics':S_1[x,:,12:16].sum(axis=1).sum(axis=1), \
-#                                              Name_Scenario + '_Building & Construction':S_1[x,:,0:5].sum(axis=1).sum(axis=1), \
-#                                              Name_Scenario + '_Infrastructure':S_1[x,:,5:7].sum(axis=1).sum(axis=1), \
-#                                              Name_Scenario + '_Industrial':S_1[x,:,7:9].sum(axis=1).sum(axis=1), \
-#                                              Name_Scenario + '_Transport':S_1[x,:,9:12].sum(axis=1).sum(axis=1), \
-#                                              Name_Scenario + '_Obsolete stocks':S_Env_Omega[x,:,:].sum(axis=1).sum(axis=1) ,\
-#                                              Name_Scenario + '_Dissipative losses':S_Env_Sigma[x,:,:].sum(axis=1).sum(axis=1), \
-#                                              Name_Scenario + '_Losses due to scrap and waste separation and sorting':S_Env_Phi[x,:].sum(axis=1), \
-#                                              Name_Scenario + '_Losses by copper recovery from scrap in recycling route':S_Env_Theta[x,:].sum(axis=1), \
-#                                              Name_Scenario + '_Not collected copper items':S_Env_Gamma[x,:,:].sum(axis=1).sum(axis=1) 
-#
-#                                              })
-#                                              
-#                                              #,,,,,]
-#                
-#               # Figure_2_paper_df = pd.DataFrame(Figure_2_paper)
-#                  
-#
-#                book=load_workbook('C:\\Users\\sklose\\Documents\\Writings\\Paper\\Paper_Number_1\\Submit_JIE\\supporting_information_1.xlsx')
-#                
-#                writer=pd.ExcelWriter('C:\\Users\\sklose\\Documents\\Writings\\Paper\\Paper_Number_1\\Submit_JIE\\supporting_information_1.xlsx',engine='openpyxl')
-#                
-#                writer.book=book
-#                
-#                writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-#                
-#                
-#                Figure_2_paper.to_excel(writer, sheet_name='figure 2',startcol=34,startrow=0,index=False)
-#                
-#                
-#                writer.save()       
-#
-#                #calculate average lifetime of copper in the technosphere
-#                Figurecounter = 2
-#                plt.figure(2)
-#                
-#                x1=list(range(0,100))
-#                y= S_1[x,:,:].sum(axis=1).sum(axis=1)
-#                def func(x, a, b, c):
-#                    return a*np.exp(-c*(x-b))
-#                popt, pcov = curve_fit(func, x, y)
-#                #plot(x,y)
-#              #  plot(x1,func(x1,*popt))
-#               # show()
-#        
-#                #integrate underneath function!!
-#                area1 = trapz(y, dx=1)
-#                # Compute the area using the composite Simpson's rule.
-#                area2 = simps(y, dx=1)
-##        
-#                x3=list(range(85,100000))
-#                area3 = simps(func(x3,*popt), dx=1)
-#                area=round(area1+area3)
-#                
-#               
-#                
-#          
-##                plt.annotate('Average life-time of copper ='+ str(area),
-##                    xy=(1.5, 0), xytext=(1, 5),
-##                    xycoords=('axes fraction', 'figure fraction'),
-##                    textcoords='offset points',
-##                    size=14, ha='right', va='bottom')
-#                
-#                #calculate halftime (year when half of the copper is left in the anthroposphere)
-#                
-#                
-#                y100= S_1[0:86,:,:].sum()/19800
-#                Circ=round(y100/85,2)
-#                print(Circ)
-#                Total_copper=F_0_IV[SY,:,:].sum()
-#                Half_copper=Total_copper/2
-#                
-#                Halftime=str(min(m for m in range (0,Par_NoOfYears) if S_1[m,:,:].sum(axis=0).sum(axis=0) < Half_copper))
-#                Halftime_year=int(Halftime) + 2015
-#
-#                #calculate Amount of copper left afer 50 years
-#                Copper_50=round(S_1[50,:,:].sum(axis=0).sum(axis=0)/19800,2)
-#               
-#                #number of circles of a copper atom on average
-#                n = round(F_IV_A[:,:,:].sum()/19800,2)
-#                
-#                n_regions =np.zeros((Par_NoOfRegions))
-#                area_regions = np.zeros((Par_NoOfRegions))
-#               
-#                    
-#                y_regions= S_1[:,:,:].sum(axis=1).sum(axis=1)
-#                x1=list(range(0,100))
-#                popt, pcov = curve_fit(func, x_test, y_regions)
-# 
-#                area1 = trapz(y_regions, dx=1)
-#           
-#                x3=list(range(300,10000000))
-#                area3 = simps(func(x3,*popt), dx=1)
-#                area=round(area1+area3)
-#                area_regions[r]=area
-#                    
-#                    
-#x_test=np.arange(0,986)
-#plt.plot(x_test, S_1[x_test,:,:].sum(axis=1).sum(axis=1)) 
-#plt.plot(x_test,func(x_test,*popt))             
-#plt.show()
-##                
-#                results_sensitivity=[Number_Scenario, Name_Scenario,area,n,Copper_50, Circ]
-#
-#                results_sensitivity_df = pd.DataFrame(results_sensitivity)
-#              
-#                book=load_workbook(str(Project_MainPath) + 'General_Results\\' +'Results_Sensitivity.xlsx')
-#                
-#                writer=pd.ExcelWriter(str(Project_MainPath) + 'General_Results\\' +'Results_Sensitivity.xlsx',engine='openpyxl')
-#                
-#                writer.book=book
-#                
-#                writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-#                
-#                
-#                results_sensitivity_df.to_excel(writer, sheet_name='Sheet1',startcol=int(Number_Scenario),startrow=1,index=False)
-#                
-#                
-#                writer.save()
-#
-#                EoLRR_min=min(EoLRR[:,:].sum(axis=1))      
-#
-#                a=np.round(S_1[:,:,:].sum(axis=1).sum(axis=1),decimals=0)
-#                
-#                TotalStockInTime1=[Number_Scenario, Name_Scenario]
-#                
-#                TotalStockInTime1.extend(a)
-#                
-#                TotalStockInTime_df = pd.DataFrame(TotalStockInTime1)
-#                              
-#                book=load_workbook(str(Project_MainPath) + 'General_Results\\' +'Results_totalstock.xlsx')
-#                
-#                writer=pd.ExcelWriter(str(Project_MainPath) + 'General_Results\\' + 'Results_totalstock.xlsx' ,engine='openpyxl')
-#                
-#                writer.book=book
-#                
-#                writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-#                
-#                
-#                TotalStockInTime_df.to_excel(writer, sheet_name='Sheet1',startcol=int(Number_Scenario),startrow=1,index=False)
-#
-#
-#                writer.save()
-
-
-   
-    
-#    
-#                Figurecounter = 3
-#                
-#                
-#               # BAU_stocks[:]= S_1[:,:,:].sum(axis=1).sum(axis=1)
-#                plt.figure(3)
-#                
-#                x = list(range(0,86))
-#                Par_Time=list(range(2015,2101))
-#            
-#         #       plt.plot(Par_Time, S_1[x,:,:].sum(axis=1).sum(axis=1)/BAU_stocks[x],'k',label='BAU')
-#                plt.plot(Par_Time, S_1[x,:,:].sum(axis=1).sum(axis=1)/BAU_stocks[x],'b',label='')
-#           #     plt.plot(Par_Time, S_1[x,:,:].sum(axis=1).sum(axis=1)/BAU_stocks[x],'k:',label='\theta_inf')
-#         #       plt.plot(Par_Time, S_1[x,:,:].sum(axis=1).sum(axis=1)/BAU_stocks[x],'darkgrey',marker='o',markerfacecolor='None',markevery=3,linestyle='', label='$\gamma$$_inf$')
-#       #         plt.plot(Par_Time, S_1[x,:,:].sum(axis=1).sum(axis=1)/BAU_stocks[x],'darkgrey',marker='+',markerfacecolor='None',markevery=3,linestyle='', label='$\phi$$_{inf}$')
-#
-#                my_xticks = [Par_Time]
-#                
-#                                
-#                plt.legend(frameon=True)
-#                plt.legend(bbox_to_anchor=(1.04,1), loc="lower center")
-#                xmin, xmax, ymin, ymax = 2015, 2100, 0.6, 1.42
-#                print(xmin, xmax, ymin, ymax)
-#                plt.axis([xmin, xmax, ymin, ymax])
-#                plt.savefig(str(Path_Result) +'sensStockplot.svg',acecolor='w',edgecolor='w', bbox_inches='tight')
-#                plt.savefig(str(Path_Result) +'sensStockplot.png',acecolor='w',edgecolor='w', bbox_inches='tight', dpi=500)
-#                
-#workbook  = Sensitivity_Workbook.book
-#worksheet = Sensitivity_Workbook.sheets['Sheet1']
-#
-#chart=workbook.add_chart({'type':'line'})
-## Configure the series of the chart from the dataframe data.
-#chart.add_series({'values': 'results_sensitivity_df'})
-#
-## Insert the chart into the worksheet.
-#worksheet.insert_chart('D2', chart)
-## Create a chart object.
-#chart = workbook.add_chart({'type': 'column'})
-#
-#worksheet.insert_chart('D2', chart)
-
-#workbook  = Sensitivity_Workbook.book
-#worksheet = Sensitivity_Workbook.sheets['Sheet1']
-#
-#chart=workbook.add_chart({'type':'line'})
-## Configure the series of the chart from the dataframe data.
-#chart.add_series({'values': 'results_sensitivity_df'})
-#
-## Insert the chart into the worksheet.
-#worksheet.insert_chart('D2', chart)
-## Create a chart object.
-#chart = workbook.add_chart({'type': 'column'})
-#
-#worksheet.insert_chart('D2', chart)
+       
+      
 
 
 
-#Senstitivit_Pandas_Sheet=Sensitivity_Workbook.parse('Sheet1')
-
-#writer = pd.ExcelWriter(Path_Data +'Results_Sensitivity.xlsx', engine='xlsxwriter')
-#Senstitivit_Pandas_Sheet.to_excel(writer, 'Sheet1')
-#writer.save()
-#
-#SW=load_workbook(Path_Data +'Results_Sensitivity.xlsx')
-#print(SW.get_sheet_names())
-# 
-# 
-#Sensitivity_Workbook = xlsxwriter.Workbook(Path_Data +'Results_Sensitivity.xlsx')
-#Sensitivitysheet  = Sensitivity_Workbook.add_worksheet('Sheet1')
-#
-#
-#.get_worksheet_by_name('Sheet1')
-#
-#Sensitivitysheet. 
-#
-#Sensitivity_Workbook.save('Sensitivitysheet')
-#
-#sheet_by_name('Sensitivity')
-#Sensitivitysheet2 = Sensitivity_Workbook.add_worksheet('flow_data')
-#Sensitivitysheet.write('B2' ,    "Source")
-#Sensitivity_Workbook.
-
-#ormat to use to highlight cells.
-#               bold = workbook.add_format({'bold': True})
-#    
-#                #Add here the flows you want to have in the Sankey Diagram 
-#                FlowData = (
-#                ['Source','Value','Color', 'Flow_Style','Target'],
-#                ['PP', round(Global_Copper_Production2015),'(200,191,55)','ab','M'],
-#                ['M',round(F_IV_A[SY+1:,:,0:5].sum()),'(0,191,255)','ab','BC'])
-#
-#
-#                # Start from the first cell. Rows and columns are zero indexed.
-#                row = 0
-#                col = 0
-#
-#    # Iterate over the data and write it out row by row.
-#    for Source,Value, Color,Flow_Style,Target in (FlowData):
-#        Flowworksheet.write(row, col,     Source)
-#        Flowworksheet.write(row, col + 1, Value)
-#        Flowworksheet.write(row, col + 2, Color)
-
-
-    
-    
-    
-                             
-  #  plt.show()
-
-print(S_Env_Gamma[35,:,:].sum())  
-print(S_Env_Omega[35,:,:].sum())      
-print(S_Env_Phi[35,:].sum())     
-print(S_Env_Sigma[35,:,:].sum())           
-print(S_Env_Theta[35,:].sum())         
-           
 
     
 print('END')    
